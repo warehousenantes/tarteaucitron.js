@@ -1,45 +1,40 @@
 /*global tarteaucitron, ga, Shareaholic, stLight, clicky, top, google, Typekit, FB, ferankReady, IN, stButtons, twttr, PCWidget*/
 /*jslint regexp: true, nomen: true*/
 
-// google analytics
-tarteaucitron.services.gtag = {
-    "key": "gtag",
+// google analytics multiple
+tarteaucitron.services.multiplegtag = {
+    "key": "multiplegtag",
     "type": "analytic",
-    "name": "Google Analytics (GA4)",
-    "uri": "https://policies.google.com/privacy",
+    "name": "Google Analytics (gtag.js)",
+    "uri": "https://support.google.com/analytics/answer/6004245",
     "needConsent": true,
     "cookies": (function () {
-        var googleIdentifier = tarteaucitron.user.gtagUa,
-          tagUaCookie = '_gat_gtag_' + googleIdentifier,
-          tagGCookie = '_ga_' + googleIdentifier;
 
-        tagUaCookie = tagUaCookie.replace(/-/g, '_');
-        tagGCookie = tagGCookie.replace(/G-/g, '');
+        var cookies = ['_ga', '_gat', '_gid', '__utma', '__utmb', '__utmc', '__utmt', '__utmz', '_gcl_au'];
 
-        return ['_ga', '_gat', '_gid', '__utma', '__utmb', '__utmc', '__utmt', '__utmz', tagUaCookie, tagGCookie, '_gcl_au'];
+        if (tarteaucitron.user.multiplegtagUa !== undefined) {
+            tarteaucitron.user.multiplegtagUa.forEach(function (ua) {
+                cookies.push('_gat_gtag_' + ua.replace(/-/g, '_'));
+                cookies.push('_ga_' + ua.replace(/G-/g, ''));
+            });
+        }
+
+        return cookies;
     })(),
     "js": function () {
         "use strict";
         window.dataLayer = window.dataLayer || [];
-        tarteaucitron.addScript('https://www.googletagmanager.com/gtag/js?id=' + tarteaucitron.user.gtagUa, '', function () {
-            window.gtag = function gtag() { dataLayer.push(arguments); }
-            gtag('js', new Date());
-            var additional_config_info = (timeExpire !== undefined) ? {'anonymize_ip': true, 'cookie_expires': timeExpire / 1000} : {'anonymize_ip': true};
 
-            if (tarteaucitron.user.gtagCrossdomain) {
-                /**
-                 * https://support.google.com/analytics/answer/7476333?hl=en
-                 * https://developers.google.com/analytics/devguides/collection/gtagjs/cross-domain
-                 */
-                gtag('config', tarteaucitron.user.gtagUa, additional_config_info, { linker: { domains: tarteaucitron.user.gtagCrossdomain, } });
-            } else {
-                gtag('config', tarteaucitron.user.gtagUa, additional_config_info);
-            }
-
-            if (typeof tarteaucitron.user.gtagMore === 'function') {
-                tarteaucitron.user.gtagMore();
-            }
-        });
+        if (tarteaucitron.user.multiplegtagUa !== undefined) {
+            tarteaucitron.user.multiplegtagUa.forEach(function (ua) {
+                tarteaucitron.addScript('https://www.googletagmanager.com/gtag/js?id=' + ua, '', function () {
+                    window.gtag = function gtag() { dataLayer.push(arguments); }
+                    gtag('js', new Date());
+                    var additional_config_info = (timeExpire !== undefined) ? {'anonymize_ip': true, 'cookie_expires': timeExpire / 1000} : {'anonymize_ip': true};
+                    gtag('config', ua, additional_config_info);
+                });
+            });
+        }
     }
 };
 
