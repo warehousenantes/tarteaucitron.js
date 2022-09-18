@@ -25,20 +25,24 @@ tarteaucitron.services.multiplegtag = {
         "use strict";
         window.dataLayer = window.dataLayer || [];
 
-        tarteaucitron.user.multiplegtagUa.forEach(function (ua) {
-            tarteaucitron.addScript('https://www.googletagmanager.com/gtag/js?id=' + ua, '', function () {
-                window.gtag = function gtag() { dataLayer.push(arguments); }
-                gtag('js', new Date());
+        tarteaucitron.addScript('https://www.googletagmanager.com/gtag/js?id=' + tarteaucitron.user.multiplegtagUa[0], '', function () {
+            window.gtag = function gtag() {
+                dataLayer.push(arguments);
+            }
+
+            gtag('js', new Date());
+
+            tarteaucitron.user.multiplegtagUa.forEach(function (ua) {
                 var additional_config_info = (timeExpire !== undefined) ? {'anonymize_ip': true, 'cookie_expires': timeExpire / 1000} : {'anonymize_ip': true};
                 gtag('config', ua, additional_config_info);
             });
-        });
 
-        if (typeof tarteaucitron.user.multiplegtagMore === "function") {
-            tarteaucitron.user.multiplegtagMore();
-        }
+            if (typeof tarteaucitron.user.multiplegtagMore === "function") {
+                tarteaucitron.user.multiplegtagMore();
+            }
+        });
     }
-};
+}
 
 // facebook pixel
 tarteaucitron.services.facebookpixel = {
@@ -67,7 +71,7 @@ tarteaucitron.services.facebookpixel = {
             tarteaucitron.user.facebookpixelMore();
         }
     }
-};
+}
 
 // tiktok
 tarteaucitron.services.tiktok = {
@@ -107,7 +111,7 @@ tarteaucitron.services.tiktok = {
             tarteaucitron.user.tiktokMore();
         }
     },
-};
+}
 
 // snapchat
 tarteaucitron.services.snapchat = {
@@ -142,7 +146,7 @@ tarteaucitron.services.snapchat = {
             }
         }
     },
-};
+}
 
 // googlemaps embed iframe
 tarteaucitron.services.googlemapsembed = {
@@ -172,4 +176,4 @@ tarteaucitron.services.googlemapsembed = {
             return tarteaucitron.engage(id);
         });
     }
-};
+}
